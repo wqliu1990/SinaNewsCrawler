@@ -10,9 +10,8 @@ import MySQLdb
 import MySQLdb.cursors
 from twisted.enterprise import adbapi
 from hashlib import md5
-from scrapy import log
 
-class NewsPipeline(object):
+class JsonStoreNewsPipeline(object):
     def __init__(self):
         self.file = codecs.open('sinanews.json', 'wb', encoding='utf-8')
         
@@ -21,12 +20,13 @@ class NewsPipeline(object):
         self.file.write(line.decode('unicode_escape'))
         return item
 
-class MySQLStoreNewsPipeline(object):
+class SQLStoreNewsPipeline(object):
     def __init__(self):
         self.dbpool = adbapi.ConnectionPool('MySQLdb',
-            db = 'news',
-            user = 'root',
-            passwd = 'admin',
+            host = '',
+            db = '',
+            user = '',
+            passwd = '',
             cursorclass = MySQLdb.cursors.DictCursor,
             charset = 'utf8',
             use_unicode = True
@@ -41,17 +41,16 @@ class MySQLStoreNewsPipeline(object):
     #将每行更新或写入数据库中
     def _do_insert(self, conn, item, spider):
         urlmd5id = self._get_urlmd5id(item)
-        conn.execute('select * from sinanews where urlmd5id = %s', (urlmd5id, ))
+        conn.execute('select * from news where id = %s', (urlmd5id, ))
         ret = conn.fetchone()
         if ret:
             pass
         else:
-            print 'insert into sinanews (urlmd5id, title, source, public_time, text) values (%s, %s, %s, %s, %s)', (urlmd5id, item['title'], item['source'], item['public_time'], item['text'])
-            conn.execute('insert into sinanews(urlmd5id, title, source, public_time, text) values(%s, %s, %s, %s, %s)', (urlmd5id, item['title'], item['source'], item['public_time'], item['text']))
+            conn.execute('insert into news(id, title, content, public_time, category, source, url) values(%s, %s, %s, %s, %s, %s, %s)', \
+                         (urlmd5id, item['title'], item['content'], item['public_time'], item['category'], item['source'], item['url']))
 
     #获取url的md5编码
     def _get_urlmd5id(self, item):
-        #text进行md5处理，为避免重复采集设计
         return md5(item['url']).hexdigest()
     
     #异常处理

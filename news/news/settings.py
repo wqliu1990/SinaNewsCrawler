@@ -13,7 +13,6 @@ BOT_NAME = 'news'
 
 SPIDER_MODULES = ['news.spiders']
 NEWSPIDER_MODULE = 'news.spiders'
-SCHEDULER_ORDER = 'BFO'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'news (+http://www.yourdomain.com)'
@@ -24,7 +23,7 @@ SCHEDULER_ORDER = 'BFO'
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-#DOWNLOAD_DELAY=3
+#DOWNLOAD_DELAY=1
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN=16
 #CONCURRENT_REQUESTS_PER_IP=16
@@ -62,8 +61,8 @@ SCHEDULER_ORDER = 'BFO'
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'news.pipelines.NewsPipeline': 300,
-##    'news.pipelines.MySQLStoreNewsPipeline': 300
+    'news.pipelines.JsonStoreNewsPipeline': 300,
+    #'news.pipelines.SQLStoreNewsPipeline': 300
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -85,9 +84,4 @@ ITEM_PIPELINES = {
 #HTTPCACHE_IGNORE_HTTP_CODES=[]
 #HTTPCACHE_STORAGE='scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-# start MySQL database configure setting
-##MYSQL_HOST = 'localhost'
-##MYSQL_DBNAME = 'news'
-##MYSQL_USER = 'root'
-##MYSQL_PASSWD = 'admin'
-# end of MySQL database configure setting
+SCHEDULER_ORDER = 'BFO'
